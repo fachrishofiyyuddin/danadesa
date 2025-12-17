@@ -21,8 +21,19 @@
                 </p>
             </div>
 
+            @php
+                $statusLabels = [
+                    'draft' => 'Draft – Belum Dikirim',
+                    'cek_sekdes' => 'Menunggu Verifikasi Sekretaris Desa',
+                    'cek_bendahara' => 'Menunggu Verifikasi Bendahara',
+                    'cek_kades' => 'Menunggu Persetujuan Kepala Desa',
+                    'disetujui' => 'Disetujui – Proses Selesai',
+                    'ditolak' => 'Ditolak – Perlu Perbaikan',
+                ];
+            @endphp
+
             <div>
-                <p class="text-base text-gray-600 mb-2">Status</p>
+                <p class="text-base text-gray-600 mb-2">Status RAB</p>
                 <span
                     class="px-4 py-2 rounded text-base font-semibold
                     @if ($rab->status == 'draft') bg-gray-100 text-gray-700
@@ -32,7 +43,8 @@
                     @elseif($rab->status == 'ditolak') bg-red-100 text-red-700
                     @elseif($rab->status == 'disetujui') bg-green-100 text-green-700 @endif
                 ">
-                    {{ strtoupper(str_replace('_', ' ', $rab->status)) }}
+                    {{ $statusLabels[$rab->status] ?? '-' }}
+
                 </span>
             </div>
 

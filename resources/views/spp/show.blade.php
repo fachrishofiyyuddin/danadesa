@@ -22,7 +22,7 @@
             </div>
 
             <div>
-                <p class="text-base text-gray-600 mb-2">Status</p>
+                <p class="text-base text-gray-600 mb-2">Status SPP</p>
                 <span
                     class="px-4 py-2 rounded text-base font-semibold
                     @if ($spp->status == 'menunggu_verifikasi') bg-yellow-100 text-yellow-700
@@ -55,26 +55,17 @@
             $status = $spp->status;
         @endphp
 
-        {{-- AREA AKSI --}}
-        @if (
-            ($role === 'sekdes' && $status === 'menunggu_verifikasi') ||
-                ($role === 'bendahara' && $status === 'menunggu_verifikasi') ||
-                ($role === 'kades' && $status === 'menunggu_verifikasi'))
+        {{-- AREA AKSI (KHUSUS KADES) --}}
+        @if ($role === 'sekdes' && $status === 'menunggu_verifikasi')
             <div class="bg-white border rounded-lg shadow-sm p-6 space-y-5">
 
                 <h2 class="text-2xl font-semibold text-gray-800">
-                    @if ($role === 'sekdes')
-                        Verifikasi Sekdes
-                    @elseif ($role === 'bendahara')
-                        Verifikasi Bendahara
-                    @elseif ($role === 'kades')
-                        Persetujuan Kepala Desa
-                    @endif
+                    Persetujuan Kepala Desa
                 </h2>
 
                 <div class="flex flex-col md:flex-row gap-4 text-lg">
 
-                    {{-- TOMBOL SETUJUI --}}
+                    {{-- SETUJUI --}}
                     <form method="POST" action="{{ route('spp.verifikasi', $spp) }}">
                         @csrf
                         <button
@@ -83,7 +74,7 @@
                         </button>
                     </form>
 
-                    {{-- TOMBOL TOLAK --}}
+                    {{-- TOLAK --}}
                     <form method="POST" action="{{ route('spp.tolak', $spp) }}" class="flex gap-3 w-full md:w-auto">
                         @csrf
                         <input type="text" name="catatan" class="border rounded-lg p-3 flex-1 md:w-72 text-base"
@@ -98,6 +89,7 @@
                 </div>
             </div>
         @endif
+
 
     </div>
 </x-app-layout>

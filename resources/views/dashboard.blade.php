@@ -23,7 +23,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
                 {{-- KAUR / KEPALA SEKSI --}}
-                @if (in_array(auth()->user()->role, ['kaur', 'kepala_seksi']))
+                @if (in_array(auth()->user()->role, ['kaur']))
                     <a href="{{ route('rab.index') }}"
                         class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
                         <h3 class="text-lg font-semibold text-gray-800 mb-1">Kelola RAB</h3>
@@ -31,7 +31,17 @@
                             Buat dan kelola RAB kegiatan.
                         </p>
                     </a>
+
+                    {{-- DPA --}}
+                    <a href="{{ route('dpa.index') }}"
+                        class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">DPA</h3>
+                        <p class="text-gray-600 text-sm">
+                            Terbitkan dan kelola DPA kegiatan.
+                        </p>
+                    </a>
                 @endif
+
 
                 {{-- SEKRETARIS DESA --}}
                 @if (auth()->user()->role === 'sekdes')
@@ -40,6 +50,23 @@
                         <h3 class="text-lg font-semibold text-gray-800 mb-1">Verifikasi RAB</h3>
                         <p class="text-gray-600 text-sm">
                             Verifikasi data RAB dari Kaur.
+                        </p>
+                    </a>
+
+                    {{-- Lihat DPA --}}
+                    <a href="{{ route('dpa.index') }}"
+                        class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Data DPA</h3>
+                        <p class="text-gray-600 text-sm">
+                            Melihat DPA yang telah diterbitkan.
+                        </p>
+                    </a>
+
+                    <a href="{{ route('spp.index') }}"
+                        class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Kelola SPP</h3>
+                        <p class="text-gray-600 text-sm">
+                            Proses verifikasi SPP.
                         </p>
                     </a>
                 @endif
@@ -54,14 +81,6 @@
                         </p>
                     </a>
 
-                    <a href="{{ route('spp.index') }}"
-                        class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Kelola SPP</h3>
-                        <p class="text-gray-600 text-sm">
-                            Proses verifikasi SPP.
-                        </p>
-                    </a>
-
                     <a href="{{ route('pembayaran.index') }}"
                         class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
                         <h3 class="text-lg font-semibold text-gray-800 mb-1">Pembayaran</h3>
@@ -73,12 +92,20 @@
 
 
                 {{-- KEPALA DESA --}}
-                @if (auth()->user()->role === 'kepala_desa')
+                @if (auth()->user()->role === 'kades')
                     <a href="{{ route('rab.index') }}"
                         class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
                         <h3 class="text-lg font-semibold text-gray-800 mb-1">Persetujuan RAB</h3>
                         <p class="text-gray-600 text-sm">
                             Menyetujui atau menolak RAB.
+                        </p>
+                    </a>
+
+                    <a href="{{ route('spp.index') }}"
+                        class="bg-white p-4 shadow-sm hover:shadow-md border rounded-lg block">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Kelola SPP</h3>
+                        <p class="text-gray-600 text-sm">
+                            Proses verifikasi SPP.
                         </p>
                     </a>
 

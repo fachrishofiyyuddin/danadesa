@@ -12,27 +12,40 @@ class RabController extends Controller
         $user = auth()->user();
 
         switch ($user->role) {
+
             case 'kaur':
-                // KAUR bisa melihat semua RAB miliknya, termasuk draft
-                $rabs = RAB::where('user_id', $user->id)->get();
+                // KAUR: hanya RAB miliknya sendiri (semua status)
+                $rabs = Rab::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
                 break;
 
             case 'sekdes':
-                // Sekdes melihat semua RAB kecuali draft
-                $rabs = RAB::whereIn('status', ['cek_sekdes', 'ditolak', 'disetujui', 'cek_bendahara', 'cek_kades'])->get();
+                $rabs = Rab::whereIn('status', ['cek_sekdes', 'disetujui'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
                 break;
+
 
             case 'bendahara':
-                // Bendahara melihat RAB sesuai status
-                $rabs = RAB::whereIn('status', ['cek_bendahara', 'ditolak', 'disetujui', 'cek_kades'])->get();
+                $rabs = Rab::whereIn('status', [
+                    'cek_bendahara',
+                    'disetujui'
+                ])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
                 break;
 
+
             case 'kades':
-                $rabs = RAB::whereIn('status', ['cek_kades', 'disetujui', 'ditolak'])->get();
+                // KEPALA DESA: hanya RAB yang perlu keputusan akhir
+                $rabs = Rab::where('status', 'cek_kades')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
                 break;
 
             default:
-                $rabs = collect(); // kosong
+                $rabs = collect();
         }
 
         return view('rab.index', compact('rabs'));
@@ -56,7 +69,7 @@ class RabController extends Controller
             'nama_kegiatan' => $request->nama_kegiatan,
             'deskripsi' => $request->deskripsi,
             'jumlah_anggaran' => $request->jumlah_anggaran,
-            'status' => 'menunggu_verifikasi'
+            'status' => 'cek_sekdes'
         ]);
 
         return redirect()->route('rab.index')->with('success', 'RAB berhasil dibuat.');

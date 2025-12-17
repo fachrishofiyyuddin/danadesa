@@ -6,7 +6,7 @@
             <h1 class="text-3xl font-bold text-gray-800">Daftar SPP</h1>
 
             {{-- Tombol tambah SPP hanya muncul jika rab_id ada --}}
-            @if ((auth()->user()->role === 'kaur' || auth()->user()->role === 'bendahara') && request('rab_id'))
+            @if (auth()->user()->role === 'kaur' && request('rab_id'))
                 <a href="{{ route('spp.create', ['rab_id' => request('rab_id')]) }}"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
                     <span class="text-lg">＋</span>
@@ -34,9 +34,11 @@
                             $colors = [
                                 'menunggu_verifikasi' => 'bg-yellow-100 text-yellow-700',
                                 'ditolak' => 'bg-red-100 text-red-700',
-                                'disetujui' => 'bg-green-100 text-green-700',
+                                'disetujui' => 'bg-blue-100 text-blue-700',
+                                'dibayar' => 'bg-green-100 text-green-700',
                             ];
                         @endphp
+
 
                         <tr class="hover:bg-gray-50 transition">
                             <td class="p-4 text-gray-800 font-medium">
@@ -60,9 +62,27 @@
                                         Detail
                                     </a>
 
+                                    {{-- PEMBAYARAN --}}
+                                    @if (auth()->user()->role === 'bendahara')
+                                        @if ($spp->status === 'disetujui')
+                                            {{-- BELUM DIBAYAR --}}
+                                            <a href="{{ route('pembayaran.create', $spp->id) }}"
+                                                class="text-green-600 hover:underline font-semibold">
+                                                💸 Pembayaran
+                                            </a>
+                                        @elseif ($spp->status === 'dibayar')
+                                            {{-- SUDAH DIBAYAR --}}
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full
+                   bg-green-100 text-green-800 text-sm font-semibold">
+                                                ✔ Sudah Dibayar
+                                            </span>
+                                        @endif
+                                    @endif
+
                                     {{-- HAPUS --}}
                                     @if (
-                                        (auth()->user()->role === 'bendahara' && $spp->status === 'menunggu_verifikasi') ||
+                                        (auth()->user()->role === 'kaur' && $spp->status === 'menunggu_verifikasi') ||
                                             (auth()->user()->role === 'kaur' && $spp->status === 'ditolak'))
                                         @if (Route::has('spp.destroy'))
                                             <form action="{{ route('spp.destroy', $spp) }}" method="POST"

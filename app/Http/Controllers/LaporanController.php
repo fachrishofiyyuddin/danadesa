@@ -2,35 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Laporan;
 use App\Models\Rab;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
-    public function create($rab_id)
+    /**
+     * Menampilkan daftar laporan realisasi
+     * (otomatis dari RAB yang sudah dibayar)
+     */
+    public function index()
     {
-        $rab = Rab::findOrFail($rab_id);
-        return view('laporan.create', compact('rab'));
+        // Ambil RAB yang punya SPP dan sudah dibayar
+        $rabs = Rab::with([
+            'user',
+            'spps.pembayarans'
+        ])
+            ->whereHas('spps', function ($q) {
+                $q->where('status', 'dibayar');
+            })
+            ->latest()
+            ->get();
+
+        return view('laporan.index', compact('rabs'));
     }
 
-    public function store(Request $request, $rab_id)
+    /**
+     * Detail laporan per RAB
+     */
+    public function show($id)
     {
-        $request->validate([
-            'file_laporan' => 'required|file|mimes:pdf',
-            'keterangan' => 'nullable|string',
-        ]);
+        $rab = Rab::with([
+            'user',
+            'spps.pembayarans'
+        ])->findOrFail($id);
 
-        $path = $request->file('file_laporan')->store('laporan', 'public');
+        $totalRealisasi = $rab->spps->sum(function ($spp) {
+            return $spp->pembayarans->sum('jumlah_dibayar');
+        });
 
-        Laporan::create([
-            'rab_id' => $rab_id,
-            'file_laporan' => $path,
-            'keterangan' => $request->keterangan,
-            'tanggal_upload' => now(),
-        ]);
+        return view('laporan.show', compact('rab', 'totalRealisasi'));
+    }
 
-        return redirect()->route('rab.show', $rab_id)
-            ->with('success', 'Laporan berhasil diupload');
+    public function pdf(Rab $rab)
+    {
+        $rab->load(['user', 'spps.pembayarans']);
+
+        $totalRealisasi = $rab->spps->sum(
+            fn($spp) => $spp->pembayarans->sum('jumlah_dibayar')
+        );
+
+        $pdf = Pdf::loadView('laporan.pdf', compact(
+            'rab',
+            'totalRealisasi'
+        ));
+
+        return $pdf->stream('laporan-' . $rab->id . '.pdf');
     }
 }

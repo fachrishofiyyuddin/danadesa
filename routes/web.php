@@ -28,7 +28,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/rab/{rab}/verifikasi', [RabController::class, 'verifikasi'])->name('rab.verifikasi');
     Route::post('/rab/{rab}/tolak', [RabController::class, 'tolak'])->name('rab.tolak');
 
-    Route::resource('dpa', DpaController::class);
+    // DPA
+    Route::get('/dpa', [DpaController::class, 'index'])->name('dpa.index');
+
+    Route::get('/dpa/create/{rab}', [DpaController::class, 'create'])
+        ->name('dpa.create');
+
+    Route::post('/dpa/store/{rab}', [DpaController::class, 'store'])
+        ->name('dpa.store');
+
+    Route::get('/dpa/{dpa}', [DpaController::class, 'show'])
+        ->name('dpa.show');
+
+    Route::delete('/dpa/{dpa}', [DpaController::class, 'destroy'])
+        ->name('dpa.destroy');
+
+
     // Daftar RAB untuk bendahara
     Route::get('/rab/bendahara', [RabController::class, 'indexBendahara'])->name('rab.bendahara');
     // Daftar SPP
@@ -39,9 +54,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/spp/{spp}/verifikasi', [SppController::class, 'verifikasi'])->name('spp.verifikasi');
     Route::post('/spp/{spp}/tolak', [SppController::class, 'tolak'])->name('spp.tolak');
     Route::delete('/spp/{spp}', [SppController::class, 'destroy'])->name('spp.destroy');
+    Route::get('/pembayaran/create/{spp}', [PembayaranController::class, 'create'])
+        ->name('pembayaran.create');
 
-    Route::resource('pembayaran', PembayaranController::class);
-    Route::resource('laporan', LaporanController::class);
+    Route::post('/pembayaran/store/{spp}', [PembayaranController::class, 'store'])
+        ->name('pembayaran.store');
+
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])
+        ->name('pembayaran.index');
+
+    Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('laporan.index');
+
+    Route::get('/laporan/{id}', [LaporanController::class, 'show'])
+        ->name('laporan.show');
+
+    // routes/web.php
+    Route::get('/laporan/{rab}/pdf', [LaporanController::class, 'pdf'])
+        ->name('laporan.pdf');
 });
 
 Route::middleware(['auth'])->group(function () {
