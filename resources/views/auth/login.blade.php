@@ -17,7 +17,7 @@
             </div>
 
             <p class="text-sm tracking-widest uppercase font-semibold text-gray-600 dark:text-gray-300">
-                Pemerintah Kabupaten Kudus
+                Balai Desa Kandangmas Kudus
             </p>
         </div>
 
